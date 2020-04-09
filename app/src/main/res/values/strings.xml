@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Restcountries</string>
+    <string name="Image_flag">Картинка флага</string>
 </resources>
