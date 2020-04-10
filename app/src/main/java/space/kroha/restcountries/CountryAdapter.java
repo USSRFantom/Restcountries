@@ -1,28 +1,40 @@
 package space.kroha.restcountries;
-
-import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.ahmadrosid.svgloader.SvgLoader;
 import com.bumptech.glide.Glide;
-
 import java.util.ArrayList;
+import java.util.List;
 
 import space.kroha.restcountries.data.Country;
-
 public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryViewHolder>{
 
-    private ArrayList<Country> countries;
+    private List<Country> countries;
+    private OnCountryClickListener onCountryClickListener;
+    private OnReachEndListener onReachEndListener;
 
     public CountryAdapter(){
         countries = new ArrayList<>();
+    }
+
+
+    interface OnCountryClickListener {
+        void onCountryClick(int position);
+    }
+
+    interface OnReachEndListener{
+        void onReachEnd();
+    }
+
+    public void setOnReachEndListener(OnReachEndListener onReachEndListener) {
+        this.onReachEndListener = onReachEndListener;
+    }
+
+    public void setOnCountryClickListener(OnCountryClickListener onCountryClickListener) {
+        this.onCountryClickListener = onCountryClickListener;
     }
 
     @NonNull
@@ -34,6 +46,9 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
 
     @Override
     public void onBindViewHolder(@NonNull CountryViewHolder countryViewHolder, int i) {
+        if (i > countries.size() - 5 &&  onCountryClickListener != null){
+            onReachEndListener.onReachEnd();
+        }
         Country country = countries.get(i);
         String uri = country.getFlag();
         Glide.with(countryViewHolder.itemView.getContext())
@@ -53,20 +68,28 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
         public CountryViewHolder(@NonNull View itemView) {
             super(itemView);
             imageViewFlag = itemView.findViewById(R.id.imageViewFlag);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onCountryClickListener != null){
+                        onCountryClickListener.onCountryClick(getAdapterPosition());
+                    }
+                }
+            });
         }
     }
 
-    public void setCountries(ArrayList<Country> countries) {
+    public void setCountries(List<Country> countries) {
         this.countries = countries;
         notifyDataSetChanged();
     }
 
-    public void addCountries(ArrayList<Country> countries) {
+    public void addCountries(List<Country> countries) {
         this.countries.addAll(countries);
         notifyDataSetChanged();
     }
 
-    public ArrayList<Country> getCountries() {
+    public List<Country> getCountries() {
         return countries;
     }
 }

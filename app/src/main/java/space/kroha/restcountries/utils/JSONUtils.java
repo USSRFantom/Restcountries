@@ -33,7 +33,7 @@ public class JSONUtils {
                 String region = objectCountry.getString(KEY_REGION);
                 int population = objectCountry.getInt(KEY_POPULATION);
                 String flag = objectCountry.getString(KEY_FLAG);
-                Country country = new Country(name, capital, region, population, flag);
+                Country country = new Country(i, name, capital, region, population, flag);
                 result.add(country);
             }
         } catch (JSONException e) {

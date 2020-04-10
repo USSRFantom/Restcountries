@@ -1,20 +1,31 @@
 package space.kroha.restcountries.data;
 
-public class Country {
-    String name; //Страна
-    String capital; //Столица
-    String region; //расположение
-    int population; //численность населения
-    String flag; //картинка флага
 
-    public Country(String name, String capital, String region, int population, String flag) {
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "countries")
+public class Country {
+    @PrimaryKey
+    int id;
+    private String name; //Страна
+    private String capital; //Столица
+    private String region; //расположение
+    private int population; //численность населения
+    private String flag; //картинка флага
+
+
+    public Country(int id, String name, String capital, String region, int population, String flag) {
+        this.id = id;
         this.name = name;
         this.capital = capital;
         this.region = region;
         this.population = population;
         this.flag = flag;
     }
+    public int getId() { return id; }
 
+    public void setId(int id) { this.id = id; }
 
     public String getName() {
         return name;
