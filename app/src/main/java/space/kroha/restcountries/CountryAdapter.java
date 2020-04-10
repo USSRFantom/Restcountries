@@ -1,5 +1,6 @@
 package space.kroha.restcountries;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +10,9 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ahmadrosid.svgloader.SvgLoader;
 import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 import space.kroha.restcountries.data.Country;
@@ -32,7 +35,10 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
     @Override
     public void onBindViewHolder(@NonNull CountryViewHolder countryViewHolder, int i) {
         Country country = countries.get(i);
-        ///SVG&
+        String uri = country.getFlag();
+        Glide.with(countryViewHolder.itemView.getContext())
+                .load(uri)
+                .into(countryViewHolder.imageViewFlag);
     }
 
     @Override
