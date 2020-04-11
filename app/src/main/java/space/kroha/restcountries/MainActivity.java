@@ -15,6 +15,8 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import android.provider.ContactsContract;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -28,6 +30,7 @@ import space.kroha.restcountries.data.MainViewModel;
 import space.kroha.restcountries.utils.JSONUtils;
 import space.kroha.restcountries.utils.NetworkUtils;
 
+
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<JSONArray> {
 
     private RecyclerView recyclerViewCountries;
@@ -36,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private MainViewModel viewModel;
     private static final int LOADER_ID = 133;
     private LoaderManager loaderManager;
+    private ProgressBar progressBarLoading;
 
 
     @Override
@@ -50,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         countryAdapter = new CountryAdapter();
         recyclerViewCountries.setAdapter(countryAdapter);
         loaderManager = LoaderManager.getInstance(this);
+        progressBarLoading = findViewById(R.id.progressBarLoading);
 
         countryAdapter.setOnCountryClickListener(new CountryAdapter.OnCountryClickListener() {
             @Override
@@ -90,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public Loader<JSONArray> onCreateLoader(int id, @Nullable Bundle bundle) {
         NetworkUtils.JSONLoader jsonLoader = new NetworkUtils.JSONLoader(this, bundle);
+        progressBarLoading.setVisibility(View.VISIBLE);
         return jsonLoader;
     }
 
@@ -103,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 viewModel.insertCountries(country);
             }
         }
+        progressBarLoading.setVisibility(View.INVISIBLE);
         loaderManager.destroyLoader(LOADER_ID);
 
     }

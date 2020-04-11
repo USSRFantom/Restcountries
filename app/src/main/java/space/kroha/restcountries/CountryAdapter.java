@@ -46,7 +46,7 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
 
     @Override
     public void onBindViewHolder(@NonNull CountryViewHolder countryViewHolder, int i) {
-        if (i > countries.size() - 5 &&  onCountryClickListener != null){
+        if (countries.size() >= 20 &&  onCountryClickListener != null){
             onReachEndListener.onReachEnd();
         }
         Country country = countries.get(i);
