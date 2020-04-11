@@ -1,9 +1,13 @@
 package space.kroha.restcountries;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,6 +19,7 @@ import android.widget.Toast;
 
 import org.json.JSONArray;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,12 +28,14 @@ import space.kroha.restcountries.data.MainViewModel;
 import space.kroha.restcountries.utils.JSONUtils;
 import space.kroha.restcountries.utils.NetworkUtils;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<JSONArray> {
 
     private RecyclerView recyclerViewCountries;
     private CountryAdapter countryAdapter;
 
     private MainViewModel viewModel;
+    private static final int LOADER_ID = 133;
+    private LoaderManager loaderManager;
 
 
     @Override
@@ -42,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewCountries.setLayoutManager(new GridLayoutManager(this, 2));
         countryAdapter = new CountryAdapter();
         recyclerViewCountries.setAdapter(countryAdapter);
+        loaderManager = LoaderManager.getInstance(this);
 
         countryAdapter.setOnCountryClickListener(new CountryAdapter.OnCountryClickListener() {
             @Override
@@ -71,14 +79,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void downloadData(){
+        URL url = NetworkUtils.buildURL();
+        Bundle bundle = new Bundle();
+        bundle.putString("url", url.toString());
+        loaderManager.restartLoader(LOADER_ID, bundle, this);
+
+    }
+
+    @NonNull
+    @Override
+    public Loader<JSONArray> onCreateLoader(int id, @Nullable Bundle bundle) {
+        NetworkUtils.JSONLoader jsonLoader = new NetworkUtils.JSONLoader(this, bundle);
+        return jsonLoader;
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<JSONArray> loader, JSONArray jsonArray1) {
         JSONArray jsonArray = NetworkUtils.getJSONFromNetwork();
-        ArrayList<Country> countries =  JSONUtils.getLessonsFromJSON(jsonArray);
+        ArrayList<Country> countries =  JSONUtils.getLessonsFromJSON(jsonArray1);
         if (countries != null && !countries.isEmpty()){
             viewModel.deleteAllCountries();
             for(Country country : countries){
                 viewModel.insertCountries(country);
             }
         }
+        loaderManager.destroyLoader(LOADER_ID);
+
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<JSONArray> loader) {
 
     }
 }
