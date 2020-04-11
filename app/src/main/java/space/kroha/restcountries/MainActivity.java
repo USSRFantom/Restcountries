@@ -7,8 +7,10 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import android.provider.ContactsContract;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -44,7 +46,10 @@ public class MainActivity extends AppCompatActivity {
         countryAdapter.setOnCountryClickListener(new CountryAdapter.OnCountryClickListener() {
             @Override
             public void onCountryClick(int position) {
-                Toast.makeText(MainActivity.this, "Clicked: " + position, Toast.LENGTH_SHORT).show();
+                Country country = countryAdapter.getCountries().get(position);
+                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                intent.putExtra("id", country.getId());
+                startActivity(intent);
             }
         });
 
